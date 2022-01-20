@@ -45,7 +45,7 @@ const Register = () => {
                             </label>
                             <input
                                 className='w-full bg-gray-100 px-4 py-2 rounded-lg focus:outline-none'
-                                type='text'
+                                type='password'
                                 name='password'
                                 id='password'
                                 placeholder='password'
@@ -59,7 +59,7 @@ const Register = () => {
                             </label>
                             <input
                                 className='w-full bg-gray-100 px-4 py-2 rounded-lg focus:outline-none'
-                                type='text'
+                                type='password'
                                 name='confirm'
                                 id='confirm'
                                 placeholder='confirm password'
@@ -69,11 +69,6 @@ const Register = () => {
                             type='submit'
                             className='w-full mt-6 bg-indigo-600 rounded-lg px-4 py-2 text-lg text-white tracking-wide font-semibold font-sans'>
                             Register
-                        </button>
-                        <button
-                            type='submit'
-                            className='w-full mt-6 mb-3 bg-indigo-100 rounded-lg px-4 py-2 text-lg text-gray-800 tracking-wide font-semibold font-sans'>
-                            Login
                         </button>
                     </form>
                 </div>

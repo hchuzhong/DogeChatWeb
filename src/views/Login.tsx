@@ -70,7 +70,7 @@ const Login = () => {
                             </label>
                             <input
                                 className='w-full bg-gray-100 px-4 py-2 rounded-lg focus:outline-none'
-                                type='text'
+                                type='password'
                                 name='password'
                                 id='password'
                                 placeholder='password'
@@ -82,6 +82,21 @@ const Login = () => {
                             className='w-full mt-6 bg-indigo-600 rounded-lg px-4 py-2 text-lg text-white tracking-wide font-semibold font-sans'>
                             登录
                         </button>
+                        <span
+                            onClick={() => {
+                                console.log("忘记密码");
+                            }}
+                            className='text-sm ml-2 hover:text-blue-500 cursor-pointer'>
+                            Forgot Password ?
+                        </span>
+                        <div className='text-center mt-12'>
+                            <span>Don't have an account?</span>
+                            <a
+                                href='#'
+                                className='font-light text-md text-indigo-600 underline font-semibold hover:text-indigo-800'>
+                                Create One
+                            </a>
+                        </div>
                     </form>
                 </div>
             </div>
