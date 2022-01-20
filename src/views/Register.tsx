@@ -1,51 +1,13 @@
-import axios from "axios";
-import React, { useState } from "react";
+import React from "react";
 
-const initialState = {
-    username: "",
-    password: "",
-    confirmPassword: "",
-};
-
-const Login = () => {
-    const [form, setForm] = useState(initialState);
-    const handleChange = (e: any) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
-        console.log(form);
-    };
-
-    const handleSubmit = async (e: any) => {
-        e.preventDefault();
-        console.log("handleSubmit");
-        console.log(form);
-    };
-
-    const fn = () => {
-        console.log("username");
-        const data = JSON.stringify({
-            username: "靓仔三号",
-            password: 123456,
-        });
-        axios({
-            method: "post",
-            url: "https://121.5.152.193/auth/login",
-            headers: { "Content-Type": "application/json" },
-            data,
-        }).then((data) => {
-            console.log("axios return data");
-            console.log(data);
-        });
-    };
-
+const Register = () => {
     return (
         <div>
             <div className='h-screen bg-indigo-100 flex justify-center items-center'>
                 <div className='lg:w-2/5 md:w-1/2 w-2/3'>
-                    <form
-                        className='bg-white p-10 rounded-lg shadow-lg min-w-full'
-                        onSubmit={handleSubmit}>
+                    <form className='bg-white p-10 rounded-lg shadow-lg min-w-full'>
                         <h1 className='text-center text-2xl mb-6 text-gray-600 font-bold font-sans'>
-                            登录
+                            Formregister
                         </h1>
                         <div>
                             <label
@@ -59,7 +21,20 @@ const Login = () => {
                                 name='username'
                                 id='username'
                                 placeholder='username'
-                                onChange={handleChange}
+                            />
+                        </div>
+                        <div>
+                            <label
+                                className='text-gray-800 font-semibold block my-3 text-md'
+                                htmlFor='email'>
+                                Email
+                            </label>
+                            <input
+                                className='w-full bg-gray-100 px-4 py-2 rounded-lg focus:outline-none'
+                                type='text'
+                                name='email'
+                                id='email'
+                                placeholder='@email'
                             />
                         </div>
                         <div>
@@ -74,13 +49,31 @@ const Login = () => {
                                 name='password'
                                 id='password'
                                 placeholder='password'
-                                onChange={handleChange}
+                            />
+                        </div>
+                        <div>
+                            <label
+                                className='text-gray-800 font-semibold block my-3 text-md'
+                                htmlFor='confirm'>
+                                Confirm password
+                            </label>
+                            <input
+                                className='w-full bg-gray-100 px-4 py-2 rounded-lg focus:outline-none'
+                                type='text'
+                                name='confirm'
+                                id='confirm'
+                                placeholder='confirm password'
                             />
                         </div>
                         <button
                             type='submit'
                             className='w-full mt-6 bg-indigo-600 rounded-lg px-4 py-2 text-lg text-white tracking-wide font-semibold font-sans'>
-                            登录
+                            Register
+                        </button>
+                        <button
+                            type='submit'
+                            className='w-full mt-6 mb-3 bg-indigo-100 rounded-lg px-4 py-2 text-lg text-gray-800 tracking-wide font-semibold font-sans'>
+                            Login
                         </button>
                     </form>
                 </div>
@@ -89,4 +82,4 @@ const Login = () => {
     );
 };
 
-export default Login;
+export default Register;
