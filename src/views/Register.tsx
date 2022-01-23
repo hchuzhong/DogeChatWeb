@@ -1,11 +1,52 @@
-import React from "react";
+import React, { useState } from "react";
+import { API } from "../api/api";
+import { initWebSocket, websocket } from "../api/websocket";
+
+const initialState = {
+    username: "",
+    password: "",
+    confirmPassword: "",
+};
 
 const Register = () => {
+    const [form, setForm] = useState(initialState);
+    const handleChange = (e: any) => {
+        setForm({ ...form, [e.target.name]: e.target.value });
+        // console.log(form);
+    };
+
+    const handleSubmit = async (e: any) => {
+        e.preventDefault();
+        console.log("handleSubmit");
+        console.log(form);
+        if (form.username === "") {
+            return alert("请输入用户名");
+        }
+        if (form.password === "") {
+            return alert("请输入密码");
+        }
+        API.login(form).then((data) => {
+            console.log("axios return data");
+            console.log(data);
+            // 请求好友列表，然后跳转到好友列表界面
+            API.getFriendList().then((data) => {
+                console.log("getFriendList result");
+                console.log(data);
+                console.log("check websocket state");
+                if (!websocket) {
+                    initWebSocket();
+                }
+            });
+        });
+    };
+
     return (
         <div>
             <div className='h-screen bg-indigo-100 flex justify-center items-center'>
                 <div className='lg:w-2/5 md:w-1/2 w-2/3'>
-                    <form className='bg-white p-10 rounded-lg shadow-lg min-w-full'>
+                    <form
+                        className='bg-white p-10 rounded-lg shadow-lg min-w-full'
+                        onSubmit={handleSubmit}>
                         <h1 className='text-center text-2xl mb-6 text-gray-600 font-bold font-sans'>
                             Formregister
                         </h1>
@@ -21,6 +62,7 @@ const Register = () => {
                                 name='username'
                                 id='username'
                                 placeholder='username'
+                                onChange={handleChange}
                             />
                         </div>
                         <div>
@@ -49,6 +91,7 @@ const Register = () => {
                                 name='password'
                                 id='password'
                                 placeholder='password'
+                                onChange={handleChange}
                             />
                         </div>
                         <div>
