@@ -1,5 +1,7 @@
 import axios from "axios";
 import React, { useState } from "react";
+import { API } from "../api/api";
+import { initWebSocket, websocket } from "../api/websocket";
 
 const initialState = {
     username: "",
@@ -11,29 +13,31 @@ const Login = () => {
     const [form, setForm] = useState(initialState);
     const handleChange = (e: any) => {
         setForm({ ...form, [e.target.name]: e.target.value });
-        console.log(form);
+        // console.log(form);
     };
 
     const handleSubmit = async (e: any) => {
         e.preventDefault();
         console.log("handleSubmit");
         console.log(form);
-    };
-
-    const fn = () => {
-        console.log("username");
-        const data = JSON.stringify({
-            username: "靓仔三号",
-            password: 123456,
-        });
-        axios({
-            method: "post",
-            url: "https://121.5.152.193/auth/login",
-            headers: { "Content-Type": "application/json" },
-            data,
-        }).then((data) => {
+        if (form.username === "") {
+            return alert("请输入用户名");
+        }
+        if (form.password === "") {
+            return alert("请输入密码");
+        }
+        API.login(form).then((data) => {
             console.log("axios return data");
             console.log(data);
+            // 请求好友列表，然后跳转到好友列表界面
+            API.getFriendList().then((data) => {
+                console.log("getFriendList result");
+                console.log(data);
+                console.log("check websocket state");
+                if (!websocket) {
+                    initWebSocket();
+                }
+            });
         });
     };
 
