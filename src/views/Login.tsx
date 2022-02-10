@@ -1,4 +1,5 @@
 import axios from "axios";
+import JSEncrypt from "jsencrypt";
 import React, { useState } from "react";
 import { API } from "../api/api";
 import { initWebSocket, websocket } from "../api/websocket";
@@ -16,6 +17,38 @@ const Login = () => {
         // console.log(form);
     };
 
+    const sendMessageTestFn = () => {
+        // Public/PersonalNewMessage
+        console.log("click send message button");
+        const selfData = JSON.parse(localStorage.getItem("selfData") || "");
+        const messageReceiverId = JSON.parse(localStorage.getItem("FriendList") || "").find(
+            (item: any) => item.username === "DogeChat Web版"
+        )?.userId;
+
+        const encryptor = new JSEncrypt();
+        encryptor.setPublicKey(localStorage.getItem("clientPublicKey") || "");
+        encryptor.setPrivateKey(localStorage.getItem("clientPrivareKey") || "");
+        const msg = encryptor.encrypt("test from doge chat web");
+
+        const fakeData = {
+            method: "PublicNewMessage",
+            message: {
+                type: "text",
+                messageSenderId: selfData.userId,
+                // 只有 messageContent 需要加密
+                messageContent: msg,
+                messageSender: "靓仔三号",
+                notifiedParty: [],
+                messageReceiver: "DogeChat Web版",
+                isGroup: true,
+                messageReceiverId,
+            },
+        };
+        console.log("fakeData");
+        console.log(fakeData);
+        websocket.send(JSON.stringify(fakeData));
+    };
+
     const handleSubmit = async (e: any) => {
         e.preventDefault();
         console.log("handleSubmit");
@@ -29,8 +62,11 @@ const Login = () => {
         API.login(form).then((data) => {
             console.log("axios return data");
             console.log(data);
+            localStorage.setItem("selfData", JSON.stringify(data?.data?.userInfo));
             // 请求好友列表，然后跳转到好友列表界面
             API.getFriendList().then((data) => {
+                // 初始化好友列表，并将 friendList 存到 context 中
+                localStorage.setItem("FriendList", JSON.stringify(data?.data?.friends));
                 console.log("getFriendList result");
                 console.log(data);
                 console.log("check websocket state");
@@ -102,6 +138,12 @@ const Login = () => {
                             </a>
                         </div>
                     </form>
+                    <button
+                        type='submit'
+                        onClick={sendMessageTestFn}
+                        className='w-full mt-6 bg-indigo-600 rounded-lg px-4 py-2 text-lg text-white tracking-wide font-semibold font-sans'>
+                        发送消息
+                    </button>
                 </div>
             </div>
         </div>

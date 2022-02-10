@@ -24,7 +24,7 @@ const FriendList = () => {
 
                         <ol>
                             {fakeData.map((value) => (
-                                <FrirendItem />
+                                <FrirendItem key={value} />
                             ))}
                         </ol>
                     </div>
