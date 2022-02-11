@@ -4,6 +4,9 @@ import FrirendItem from "./FrirendItem";
 
 const FriendList = () => {
     const fakeData = [1, 2, 3, 4, 5, 6, 7];
+    const friendList = JSON.parse(localStorage.getItem('FriendList') || '[]') as any[];
+    console.log("FriendList -----------------")
+    console.log(friendList);
 
     return (
         <div>
@@ -23,8 +26,8 @@ const FriendList = () => {
                         </div>
 
                         <ol>
-                            {fakeData.map((value) => (
-                                <FrirendItem key={value} />
+                            {friendList.map((item) => (
+                                <FrirendItem key={item.userId} data={item}/>
                             ))}
                         </ol>
                     </div>

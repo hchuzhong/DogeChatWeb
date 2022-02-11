@@ -39,6 +39,7 @@ export function initWebSocket() {
         console.log(data);
         console.log("揭秘数据");
         console.log(data?.data[0]?.messageContent);
+        if (!data?.data) return;
 
         const cfg = ["messageContent"];
         const cfgData: string[] = [];

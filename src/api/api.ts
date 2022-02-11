@@ -3,7 +3,7 @@ import { GlobalValue } from "../GlobalValue";
 
 export namespace API {
     axios.defaults.withCredentials = true;
-    // const baseUrl = "https://121.5.152.193";
+    // const trueBaseUrl = "https://121.5.152.193";
     const baseUrl = "/api";
 
     export function login(data: { username: string; password: string }) {
@@ -33,5 +33,9 @@ export namespace API {
             console.log(publicKey);
             callback(privateKey, publicKey);
         });
+    }
+
+    export function getPictureUrl(url: string) {
+        return `/star/fileDownload/filename${url}`;
     }
 }

@@ -1,6 +1,7 @@
 import axios from "axios";
 import JSEncrypt from "jsencrypt";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { API } from "../api/api";
 import { initWebSocket, websocket } from "../api/websocket";
 
@@ -26,8 +27,7 @@ const Login = () => {
         )?.userId;
 
         const encryptor = new JSEncrypt();
-        encryptor.setPublicKey(localStorage.getItem("clientPublicKey") || "");
-        encryptor.setPrivateKey(localStorage.getItem("clientPrivareKey") || "");
+        encryptor.setPublicKey(JSON.parse(localStorage.getItem("serverPublicKey") || ""));
         const msg = encryptor.encrypt("test from doge chat web");
 
         const fakeData = {
@@ -49,6 +49,9 @@ const Login = () => {
         websocket.send(JSON.stringify(fakeData));
     };
 
+    const navigate = useNavigate();
+
+
     const handleSubmit = async (e: any) => {
         e.preventDefault();
         console.log("handleSubmit");
@@ -67,6 +70,9 @@ const Login = () => {
             API.getFriendList().then((data) => {
                 // 初始化好友列表，并将 friendList 存到 context 中
                 localStorage.setItem("FriendList", JSON.stringify(data?.data?.friends));
+                
+                navigate('/friendlist');
+                
                 console.log("getFriendList result");
                 console.log(data);
                 console.log("check websocket state");
