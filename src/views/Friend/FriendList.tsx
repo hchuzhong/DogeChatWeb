@@ -1,10 +1,11 @@
 import React from "react";
 import FriendChat from "./FriendChat";
 import FrirendItem from "./FrirendItem";
+import { GlobalType } from "../../GlobalType";
 
 const FriendList = () => {
     const fakeData = [1, 2, 3, 4, 5, 6, 7];
-    const friendList = JSON.parse(localStorage.getItem('FriendList') || '[]') as any[];
+    const friendList: GlobalType.FriendInfoType[] = JSON.parse(localStorage.getItem('FriendList') || '[]');
     console.log("FriendList -----------------")
     console.log(friendList);
 
@@ -27,7 +28,7 @@ const FriendList = () => {
 
                         <ol>
                             {friendList.map((item) => (
-                                <FrirendItem key={item.userId} data={item}/>
+                                <FrirendItem key={item.userId} friendItemInfo={item}/>
                             ))}
                         </ol>
                     </div>

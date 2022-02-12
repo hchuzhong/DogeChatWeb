@@ -36,6 +36,9 @@ export namespace API {
     }
 
     export function getPictureUrl(url: string) {
-        return `/star/fileDownload/filename${url}`;
+        const strArr = url.split('/');
+        // https://localhost/api/star/fileDownload/fff54b63-4+160+160.jpeg
+        // return `/star/fileDownload/${strArr[strArr.length - 1]}`;
+        return `/api/star/fileDownload/${strArr[strArr.length - 1]}`;
     }
 }

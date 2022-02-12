@@ -47,6 +47,7 @@ export namespace GlobalValue {
                 console.error(err);
             });
     }
+
     export function RSA2text(buffer: any) {
         var binary = "";
         var bytes = new Uint8Array(buffer);
