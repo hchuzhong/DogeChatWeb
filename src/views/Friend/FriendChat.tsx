@@ -1,87 +1,136 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { API } from "../../api/api";
+import { getHistoryMessages, websocket } from "../../api/websocket";
+import EventBus from "../../EventBus";
+import { WebsocketEvent } from "../../EventName";
+import { GlobalType } from "../../GlobalType";
 
-const FriendChat = () => {
-    return (
-        <div className='flex'>
-            <div className='w-full px-5 flex flex-col justify-between'>
-                <div className='flex flex-col mt-5'>
-                    <div className='flex justify-end mb-4'>
-                        <div className='mr-2 py-3 px-4 bg-blue-400 rounded-bl-3xl rounded-tl-3xl rounded-tr-xl text-white'>
-                            Welcome to group everyone !
-                        </div>
-                        <img
-                            src='https://source.unsplash.com/vpOeXr5wmR4/600x600'
-                            className='object-cover h-8 w-8 rounded-full'
-                            alt=''
-                        />
-                    </div>
-                    <div className='flex justify-start mb-4'>
-                        <img
-                            src='https://source.unsplash.com/vpOeXr5wmR4/600x600'
-                            className='object-cover h-8 w-8 rounded-full'
-                            alt=''
-                        />
-                        <div className='ml-2 py-3 px-4 bg-gray-400 rounded-br-3xl rounded-tr-3xl rounded-tl-xl text-white'>
-                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quaerat at
-                            praesentium, aut ullam delectus odio error sit rem. Architecto nulla
-                            doloribus laborum illo rem enim dolor odio saepe, consequatur quas?
-                        </div>
-                    </div>
-                    <div className='flex justify-end mb-4'>
-                        <div>
-                            <div className='mr-2 py-3 px-4 bg-blue-400 rounded-bl-3xl rounded-tl-3xl rounded-tr-xl text-white'>
-                                Lorem ipsum dolor, sit amet consectetur adipisicing elit. Magnam,
-                                repudiandae.
-                            </div>
+const FriendChat = ({ chooseItemId }: { chooseItemId: string }) => {
+    const chooseItem = chooseItemId !== "";
+    const friendList: GlobalType.FriendInfoType[] = JSON.parse(
+        localStorage.getItem("FriendList") || "[]"
+    );
+    let curChooseFriendInfo = null;
+    let imageSrc = "";
+    if (chooseItem) {
+        curChooseFriendInfo = friendList.find(
+            (friendInfo) => friendInfo.userId === chooseItemId
+        ) as GlobalType.FriendInfoType;
+        getHistoryMessages(curChooseFriendInfo.userId, 1);
+        imageSrc = API.getPictureUrl(curChooseFriendInfo.avatarUrl);
+    }
+    console.log("FriendChat");
+    console.log(curChooseFriendInfo);
 
-                            <div className='mt-4 mr-2 py-3 px-4 bg-blue-400 rounded-bl-3xl rounded-tl-3xl rounded-tr-xl text-white'>
-                                Lorem ipsum dolor sit amet consectetur adipisicing elit. Debitis,
-                                reiciendis!
-                            </div>
-                        </div>
-                        <img
-                            src='https://source.unsplash.com/vpOeXr5wmR4/600x600'
-                            className='object-cover h-8 w-8 rounded-full'
-                            alt=''
-                        />
-                    </div>
-                    <div className='flex justify-start mb-4'>
-                        <img
-                            src='https://source.unsplash.com/vpOeXr5wmR4/600x600'
-                            className='object-cover h-8 w-8 rounded-full'
-                            alt=''
-                        />
-                        <div className='ml-2 py-3 px-4 bg-gray-400 rounded-br-3xl rounded-tr-3xl rounded-tl-xl text-white'>
-                            happy holiday guys!
-                        </div>
-                    </div>
-                </div>
-                <div className='py-5'>
-                    <input
-                        className='w-full bg-gray-300 py-5 px-3 rounded-xl'
-                        type='text'
-                        placeholder='type your message here...'
-                    />
-                </div>
+    useEffect(() => {
+        console.log("FriendChat 初始化的时候 ============");
+        EventBus.addEventListener(WebsocketEvent.GET_HISTORY, () => {}, null);
+    }, []);
+
+    return chooseItem ? (
+        <div className='w-full h-screen flex flex-col'>
+            <div className='flex items-center border-b border-gray-300 pl-3 py-3'>
+                <img
+                    className='h-10 w-10 rounded-full object-cover'
+                    src={imageSrc}
+                    alt='username'
+                />
+                <span className='block ml-2 font-bold text-base text-gray-600'>
+                    {curChooseFriendInfo?.username}
+                </span>
             </div>
-            {/* 聊天详情 */}
-            <div className='w-2/5 border-l-2 px-5'>
-                <div className='flex flex-col'>
-                    <div className='font-semibold text-xl py-4'>Mern Stack Group</div>
-                    <img
-                        src='https://source.unsplash.com/L2cxSuKWbpo/600x600'
-                        className='object-cover rounded-xl h-64'
-                        alt=''
-                    />
-                    <div className='font-semibold py-4'>Created 22 Sep 2021</div>
-                    <div className='font-light'>
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt,
-                        perspiciatis!
-                    </div>
-                </div>
+            <div id='chat' className='w-full overflow-y-auto p-10 relative'>
+                <ul>
+                    <li className='clearfix2'>
+                        <div className='w-full flex justify-start'>
+                            <div
+                                className='bg-gray-100 rounded px-5 py-2 my-2 text-gray-700 relative'
+                                style={{ maxWidth: "300px" }}>
+                                <span className='block'>Hello bro</span>
+                                <span className='block text-xs text-right'>10:30pm</span>
+                            </div>
+                        </div>
+                        <div className='w-full flex justify-end'>
+                            <div
+                                className='bg-gray-100 rounded px-5 py-2 my-2 text-gray-700 relative'
+                                style={{ maxWidth: "300px" }}>
+                                <span className='block'>Hello</span>
+                                <span className='block text-xs text-left'>10:32pm</span>
+                            </div>
+                        </div>
+                        <div className='w-full flex justify-end'>
+                            <div
+                                className='bg-gray-100 rounded px-5 py-2 my-2 text-gray-700 relative'
+                                style={{ maxWidth: "300px" }}>
+                                <span className='block'>how are you?</span>
+                                <span className='block text-xs text-left'>10:32pm</span>
+                            </div>
+                        </div>
+                        <div className='w-full flex justify-start'>
+                            <div
+                                className='bg-gray-100 rounded px-5 py-2 my-2 text-gray-700 relative'
+                                style={{ maxWidth: "300px" }}>
+                                <span className='block'>I am fine</span>
+                                <span className='block text-xs text-right'>10:42pm</span>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <div className='w-full py-3 px-3 flex items-center justify-between border-t border-gray-300'>
+                <button className='outline-none focus:outline-none'>
+                    <svg
+                        className='text-gray-400 h-6 w-6'
+                        xmlns='http://www.w3.org/2000/svg'
+                        fill='none'
+                        viewBox='0 0 24 24'
+                        stroke='currentColor'>
+                        <path
+                            strokeLinecap='round'
+                            strokeLinejoin='round'
+                            strokeWidth='2'
+                            d='M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z'
+                        />
+                    </svg>
+                </button>
+                <button className='outline-none focus:outline-none ml-1'>
+                    <svg
+                        className='text-gray-400 h-6 w-6'
+                        xmlns='http://www.w3.org/2000/svg'
+                        fill='none'
+                        viewBox='0 0 24 24'
+                        stroke='currentColor'>
+                        <path
+                            strokeLinecap='round'
+                            strokeLinejoin='round'
+                            strokeWidth='2'
+                            d='M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13'
+                        />
+                    </svg>
+                </button>
+
+                <input
+                    aria-placeholder='Escribe un mensaje aquí'
+                    placeholder='Escribe un mensaje aquí'
+                    className='py-2 mx-3 pl-5 block w-full rounded-full bg-gray-100 outline-none focus:text-gray-700'
+                    type='text'
+                    name='message'
+                    required
+                />
+
+                <button className='outline-none focus:outline-none' type='submit'>
+                    <svg
+                        className='text-gray-400 h-7 w-7 origin-center transform rotate-90'
+                        xmlns='http://www.w3.org/2000/svg'
+                        viewBox='0 0 20 20'
+                        fill='currentColor'>
+                        <path d='M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z' />
+                    </svg>
+                </button>
             </div>
         </div>
-    );
+    ) : null;
 };
 
 export default FriendChat;

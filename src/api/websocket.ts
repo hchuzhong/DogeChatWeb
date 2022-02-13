@@ -1,4 +1,6 @@
 import JSEncrypt from "jsencrypt";
+import EventBus from "../EventBus";
+import { WebsocketEvent } from "../EventName";
 import { GlobalValue } from "../GlobalValue";
 import { API } from "./api";
 // export let websocket = new WebSocket(GlobalValue.wssBaseUrl);
@@ -19,8 +21,8 @@ export function initWebSocket() {
             // 自己的公钥和私钥也要存起来
             localStorage.setItem("clientPublicKey", publicKey);
             localStorage.setItem("clientPrivareKey", privateKey);
-            websocket.send(JSON.stringify({ method: "publicKey", key: publicKey }));
-            websocket.send(JSON.stringify({ method: "getPublicUnreadMessage", id: 0 }));
+            send({ method: "publicKey", key: publicKey });
+            send({ method: "getPublicUnreadMessage", id: 0 });
             encryptor.setPublicKey(publicKey); // 设置公钥
             encryptor.setPrivateKey(privateKey);
         });
@@ -35,6 +37,17 @@ export function initWebSocket() {
         }
         if (data?.method === "getPublicUnreadMessage") {
             localStorage.setItem("unreadMessage", JSON.stringify(data?.data));
+        }
+        if (data?.method === "getHistory") {
+            if (!data?.data?.records[0]?.messageReceiverId) {
+                console.log("当前用户无聊天信息");
+            } else {
+                localStorage.setItem(
+                    `${data.data.records[0].messageReceiverId}`,
+                    JSON.stringify(data?.data)
+                );
+                EventBus.dispatchEvent(WebsocketEvent.GET_HISTORY);
+            }
         }
         console.log(data);
         console.log("揭秘数据");
@@ -59,4 +72,40 @@ export function initWebSocket() {
     websocket.addEventListener("error", function (event) {
         console.log("check websocket error", event);
     });
+}
+
+export function getHistoryMessages(
+    friendUserId: string,
+    pageNum: number,
+    pageSize?: number,
+    uuid?: string,
+    type?: string,
+    beginDate?: string,
+    keyWord?: string
+) {
+    const paras: any = { method: "getHistory", friend: friendUserId, pageNum: pageNum };
+    if (pageSize) {
+        paras["pageSize"] = pageSize;
+    }
+    if (uuid) {
+        paras["uuid"] = uuid;
+    }
+    if (type) {
+        paras["type"] = type;
+    }
+    if (beginDate) {
+        paras["beginDate"] = beginDate;
+    }
+    if (keyWord) {
+        paras["keyWord"] = keyWord;
+    }
+    send(paras);
+}
+
+function send(data: any) {
+    if (!websocket) {
+        // 目前先返回登陆页面，后面再看看要不要自动登录
+        return console.error("请先登陆");
+    }
+    websocket.send(JSON.stringify(data));
 }
