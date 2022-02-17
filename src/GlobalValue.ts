@@ -2,9 +2,6 @@ export namespace GlobalValue {
     export const httpBaseUrl = "https://121.5.152.193";
     export const wssBaseUrl = "ws://localhost/webSocket";
 
-    // export let publicKey = "";
-    // export let privateKey = "";
-
     export function getRsaKeys(callback: Function) {
         return window.crypto.subtle
             .generateKey(
@@ -58,4 +55,6 @@ export namespace GlobalValue {
         var base64 = window.btoa(binary);
         return base64.replace(/[^\x00-\xff]/g, "$&\x01").replace(/.{64}\x01?/g, "$&\n");
     }
+
+    export function encrpypt(params: any) {}
 }

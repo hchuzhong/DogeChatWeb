@@ -1,12 +1,16 @@
-import { observable, action } from 'mobx';
-import { GlobalType } from '../GlobalType';
+import { observable, action, makeObservable } from "mobx";
+import { GlobalType } from "../GlobalType";
 
 type FriendStoreType = {
-    friendList: GlobalType.FriendInfoType[],
-    unreadMessage: GlobalType.FriendMessageType[],
+    friendList: GlobalType.FriendInfoType[];
+    unreadMessage: GlobalType.FriendMessageType[];
 };
 
 class FriendStore {
+    constructor() {
+        makeObservable(this);
+    }
+
     @observable values: FriendStoreType = {
         friendList: [],
         unreadMessage: [],
@@ -19,6 +23,17 @@ class FriendStore {
 
     @action setUnreadMessage(unreadMessage: GlobalType.FriendMessageType[]) {
         this.values.unreadMessage = unreadMessage;
+    }
+
+    // 切换好友和最开始获取好友消息的时候使用这个逻辑，后面如果再点击这个好友的时候就检查有无数据同时数据的长度大于 1
+    // 有的话就不需要重复请求了
+    @action setFriendMessageHistory(friendId: string, messageHistory: any) {
+        for (const friendInfo of this.values.friendList) {
+            if (friendInfo.userId === friendId) {
+                friendInfo.messageHistory = messageHistory;
+                break;
+            }
+        }
     }
 
     @action resetFriendList() {

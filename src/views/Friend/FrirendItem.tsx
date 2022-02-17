@@ -10,15 +10,15 @@ const FrirendItem = ({
     chooseItemId: string;
 }) => {
     const isChoose = friendItemInfo.userId === chooseItemId;
-    console.log(" ========================== ");
-    console.log(friendItemInfo);
+    // console.log(" ========================== ");
+    // console.log(friendItemInfo);
     const imageSrc = API.getPictureUrl(friendItemInfo.avatarUrl);
     let messageContent = "";
     if (friendItemInfo?.message?.messageContent) {
         messageContent =
             friendItemInfo.message.type === GlobalType.messageType.text
                 ? friendItemInfo.message.messageContent
-                : GlobalType.messageTypeToChinese[friendItemInfo.message.type];
+                : `[${GlobalType.messageTypeToChinese[friendItemInfo.message.type]}]`;
     }
 
     const normalItem = (

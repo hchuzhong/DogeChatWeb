@@ -1,17 +1,21 @@
-import { observable, action } from 'mobx';
-import { GlobalType } from '../GlobalType';
+import { observable, action, makeObservable } from "mobx";
+import { GlobalType } from "../GlobalType";
 
 class FriendMessageStore {
-    @observable values = {
-        friendMessage: [],
+    constructor() {
+        makeObservable(this);
+    }
+
+    @observable values: { data: GlobalType.FriendMessageHistoryType } = {
+        data: { current: 0, pages: 0, records: [], size: 0, total: 0 },
     };
 
-    @action setFriendMessage(friendMessage: GlobalType.FriendMessageType[]) {
-        (this.values.friendMessage as GlobalType.FriendMessageType[]) = friendMessage;
+    @action setFriendMessage(data: GlobalType.FriendMessageHistoryType) {
+        this.values.data = data;
     }
 
     @action resetFriendMessage() {
-        this.values.friendMessage = [];
+        this.values.data = { current: 0, pages: 0, records: [], size: 0, total: 0 };
     }
 }
 

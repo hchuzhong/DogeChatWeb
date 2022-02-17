@@ -1,11 +1,12 @@
 import JSEncrypt from "jsencrypt";
 import { GlobalValue } from "../GlobalValue";
 import { API } from "./api";
-import { useStores } from ".././store";
-export let websocket: WebSocket;
 
-export function initWebSocket(AuthStore: any, FriendStore: any) {
-    const encryptor = new JSEncrypt(); // 新建JSEncrypt对象
+export let websocket: WebSocket;
+export let clientEncryptor: JSEncrypt;
+
+export function initWebSocket(AuthStore: any, FriendStore: any, FriendMessageStore: any) {
+    clientEncryptor = new JSEncrypt(); // 新建JSEncrypt对象
     websocket = new WebSocket(`${GlobalValue.wssBaseUrl}?deviceType=6`);
     console.log("websocket init");
     // Connection opened
@@ -14,12 +15,12 @@ export function initWebSocket(AuthStore: any, FriendStore: any) {
         console.log("connect success");
         API.postGetPublicKey((privateKey: string, publicKey: string) => {
             // 自己的公钥和私钥也要存起来
-            AuthStore.setClientKey(privateKey, publicKey)
-            
+            AuthStore.setClientKey(privateKey, publicKey);
+
             send({ method: "publicKey", key: publicKey });
             send({ method: "getPublicUnreadMessage", id: 0 });
-            encryptor.setPublicKey(publicKey); // 设置公钥
-            encryptor.setPrivateKey(privateKey);
+            clientEncryptor.setPublicKey(publicKey); // 设置公钥
+            clientEncryptor.setPrivateKey(privateKey);
         });
     });
 
@@ -34,10 +35,15 @@ export function initWebSocket(AuthStore: any, FriendStore: any) {
             return FriendStore.setUnreadMessage(data?.data);
         }
         if (data?.method === "getHistory") {
-            if (!data?.data?.records[0]?.messageReceiverId) {
+            const hadRecords = data?.data?.records?.length > 0;
+            if (!hadRecords) {
                 console.log("当前用户无聊天信息");
             } else {
-                FriendStore.setUnreadMessage(data?.data);
+                console.log("getHistory ===========");
+                console.log(data);
+                const recrods = data?.data?.records;
+                FriendMessageStore.setFriendMessage(data?.data);
+                FriendStore.setFriendMessageHistory(recrods[0].messageReceiverId, data?.data);
             }
             return;
         }
@@ -49,7 +55,7 @@ export function initWebSocket(AuthStore: any, FriendStore: any) {
         const cfg = ["messageContent"];
         const cfgData: string[] = [];
         cfg.forEach((str) => {
-            let a = encryptor.decrypt(data?.data[0][str]);
+            let a = clientEncryptor.decrypt(data?.data[0][str]);
             console.log(`str: ${str} ==================`);
             console.log(data?.data[0][str]);
             console.log(a);
@@ -100,4 +106,12 @@ function send(data: any) {
         return console.error("请先登陆");
     }
     websocket.send(JSON.stringify(data));
+}
+
+export function clientDecrypt(data: string) {
+    let a = clientEncryptor.decrypt(data);
+    console.log(`str: ${data} ==================`);
+    console.log(a);
+    console.log(decodeURIComponent(a as string));
+    return decodeURIComponent(a as string);
 }

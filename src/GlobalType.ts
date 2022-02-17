@@ -1,5 +1,4 @@
 export namespace GlobalType {
-
     export enum messageType {
         text = "text",
         join = "join",
@@ -22,6 +21,14 @@ export namespace GlobalType {
         [messageType.track]: "Tracks",
         [messageType.voice]: "语音",
         [messageType.location]: "位置",
+    };
+
+    export type FriendMessageHistoryType = {
+        current: number;
+        pages: number;
+        records: FriendMessageType[];
+        size: number;
+        total: number;
     };
 
     export type FriendEmojisInfoType = {
@@ -69,6 +76,7 @@ export namespace GlobalType {
         nickName: string;
         isMuted: string;
         message: FriendMessageType;
+        messageHistory: FriendMessageType[];
 
         password?: string;
         email?: string;
@@ -78,13 +86,13 @@ export namespace GlobalType {
     };
 
     export type SelfDataType = {
-        avatarUrl: string,
-        createdTime: string,
-        data: string,
-        email: string,
-        online: boolean,
-        track: string,
-        userId: string,
-        username: string,
+        avatarUrl: string;
+        createdTime: string;
+        data: string;
+        email: string;
+        online: boolean;
+        track: string;
+        userId: string;
+        username: string;
     };
 }
