@@ -2,11 +2,12 @@ import React, { useState } from "react";
 import FriendChat from "./FriendChat";
 import FrirendItem from "./FrirendItem";
 import { GlobalType } from "../../GlobalType";
+import { useStores } from "../../store";
 
 const FriendList = () => {
-    const friendList: GlobalType.FriendInfoType[] = JSON.parse(
-        localStorage.getItem("FriendList") || "[]"
-    );
+    const { FriendStore } = useStores();
+    
+    const friendList = FriendStore.values.friendList;
     console.log("FriendList -----------------");
     console.log(friendList);
     const [chooseItemId, setChooseItemId] = useState("");

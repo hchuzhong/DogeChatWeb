@@ -1,5 +1,5 @@
 export namespace GlobalType {
-    
+
     export enum messageType {
         text = "text",
         join = "join",
@@ -22,7 +22,7 @@ export namespace GlobalType {
         [messageType.track]: "Tracks",
         [messageType.voice]: "语音",
         [messageType.location]: "位置",
-    }
+    };
 
     export type FriendEmojisInfoType = {
         id: number;
@@ -75,5 +75,16 @@ export namespace GlobalType {
         createdTime?: null;
         roles?: null;
         authorities?: null;
+    };
+
+    export type SelfDataType = {
+        avatarUrl: string,
+        createdTime: string,
+        data: string,
+        email: string,
+        online: boolean,
+        track: string,
+        userId: string,
+        username: string,
     };
 }

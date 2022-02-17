@@ -34,7 +34,7 @@ const Register = () => {
                 console.log(data);
                 console.log("check websocket state");
                 if (!websocket) {
-                    initWebSocket();
+                    // initWebSocket();
                 }
             });
         });

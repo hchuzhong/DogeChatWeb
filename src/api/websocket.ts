@@ -1,26 +1,21 @@
 import JSEncrypt from "jsencrypt";
-import EventBus from "../EventBus";
-import { WebsocketEvent } from "../EventName";
 import { GlobalValue } from "../GlobalValue";
 import { API } from "./api";
-// export let websocket = new WebSocket(GlobalValue.wssBaseUrl);
+import { useStores } from ".././store";
 export let websocket: WebSocket;
 
-export function initWebSocket() {
+export function initWebSocket(AuthStore: any, FriendStore: any) {
     const encryptor = new JSEncrypt(); // 新建JSEncrypt对象
     websocket = new WebSocket(`${GlobalValue.wssBaseUrl}?deviceType=6`);
     console.log("websocket init");
-
     // Connection opened
     websocket.addEventListener("open", function (event) {
         // websocket.send("ping");
         console.log("connect success");
         API.postGetPublicKey((privateKey: string, publicKey: string) => {
-            console.log("websocket websocket");
-            // console.log(data);
             // 自己的公钥和私钥也要存起来
-            localStorage.setItem("clientPublicKey", publicKey);
-            localStorage.setItem("clientPrivareKey", privateKey);
+            AuthStore.setClientKey(privateKey, publicKey)
+            
             send({ method: "publicKey", key: publicKey });
             send({ method: "getPublicUnreadMessage", id: 0 });
             encryptor.setPublicKey(publicKey); // 设置公钥
@@ -33,21 +28,18 @@ export function initWebSocket() {
         console.log("Message from server ", event.data);
         const data = JSON.parse(event.data);
         if (data?.method === "publicKey") {
-            localStorage.setItem("serverPublicKey", JSON.stringify(data?.data));
+            return AuthStore.setServerPubliKey(data?.data);
         }
         if (data?.method === "getPublicUnreadMessage") {
-            localStorage.setItem("unreadMessage", JSON.stringify(data?.data));
+            return FriendStore.setUnreadMessage(data?.data);
         }
         if (data?.method === "getHistory") {
             if (!data?.data?.records[0]?.messageReceiverId) {
                 console.log("当前用户无聊天信息");
             } else {
-                localStorage.setItem(
-                    `${data.data.records[0].messageReceiverId}`,
-                    JSON.stringify(data?.data)
-                );
-                EventBus.dispatchEvent(WebsocketEvent.GET_HISTORY);
+                FriendStore.setUnreadMessage(data?.data);
             }
+            return;
         }
         console.log(data);
         console.log("揭秘数据");

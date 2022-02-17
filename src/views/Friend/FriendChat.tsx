@@ -1,15 +1,15 @@
 import React, { useEffect } from "react";
 import { API } from "../../api/api";
 import { getHistoryMessages, websocket } from "../../api/websocket";
-import EventBus from "../../EventBus";
-import { WebsocketEvent } from "../../EventName";
 import { GlobalType } from "../../GlobalType";
+import { useStores } from "../../store";
+import { observer } from "mobx-react";
 
-const FriendChat = ({ chooseItemId }: { chooseItemId: string }) => {
+const FriendChat = observer(({ chooseItemId }: { chooseItemId: string }) => {
+    const { FriendStore } = useStores();
+    
     const chooseItem = chooseItemId !== "";
-    const friendList: GlobalType.FriendInfoType[] = JSON.parse(
-        localStorage.getItem("FriendList") || "[]"
-    );
+    const friendList = FriendStore.values.friendList;
     let curChooseFriendInfo = null;
     let imageSrc = "";
     if (chooseItem) {
@@ -19,13 +19,13 @@ const FriendChat = ({ chooseItemId }: { chooseItemId: string }) => {
         getHistoryMessages(curChooseFriendInfo.userId, 1);
         imageSrc = API.getPictureUrl(curChooseFriendInfo.avatarUrl);
     }
-    console.log("FriendChat");
+    console.log("FriendChat +-+-+-+-+------------");
+    console.log(friendList);
     console.log(curChooseFriendInfo);
 
-    useEffect(() => {
-        console.log("FriendChat 初始化的时候 ============");
-        EventBus.addEventListener(WebsocketEvent.GET_HISTORY, () => {}, null);
-    }, []);
+    // useEffect(() => {
+    //     console.log("FriendChat 初始化的时候 ============");
+    // }, []);
 
     return chooseItem ? (
         <div className='w-full h-screen flex flex-col'>
@@ -131,6 +131,6 @@ const FriendChat = ({ chooseItemId }: { chooseItemId: string }) => {
             </div>
         </div>
     ) : null;
-};
+});
 
 export default FriendChat;
