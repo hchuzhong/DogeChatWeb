@@ -42,10 +42,17 @@ export function initWebSocket(AuthStore: any, FriendStore: any, FriendMessageSto
                 console.log("getHistory ===========");
                 console.log(data);
                 const recrods = data?.data?.records;
-                FriendMessageStore.setFriendMessage(data?.data);
-                FriendStore.setFriendMessageHistory(recrods[0].messageReceiverId, data?.data);
+                if (FriendMessageStore.values.data.records.length === 0) {
+                    FriendMessageStore.setFriendMessage(data?.data);
+                } else {
+                    FriendMessageStore.updateFriendMessage(data?.data);
+                }
+                FriendStore.setFriendMessageHistory(recrods[0].messageReceiverId, FriendMessageStore.values.data);
             }
             return;
+        }
+        if (data?.method === "PublicNewMessage") {
+            // TODO
         }
         console.log(data);
         console.log("揭秘数据");
@@ -97,6 +104,8 @@ export function getHistoryMessages(
     if (keyWord) {
         paras["keyWord"] = keyWord;
     }
+    console.log("check getHistoryMessages params ==================");
+    console.log(paras);
     send(paras);
 }
 

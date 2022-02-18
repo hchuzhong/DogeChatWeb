@@ -21,38 +21,6 @@ const Login = observer(() => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
 
-    const sendMessageTestFn = () => {
-        // Public/PersonalNewMessage
-        console.log("click send message button");
-        const selfData = AuthStore.values.selfData;
-        const friendList = FriendStore.values.friendList;
-        const messageReceiverId = friendList.find(
-            (item: any) => item.username === "DogeChat Web版"
-        )?.userId;
-
-        const encryptor = new JSEncrypt();
-        encryptor.setPublicKey(AuthStore.values.serverPubliKey);
-        const msg = encryptor.encrypt("test from doge chat web");
-
-        const fakeData = {
-            method: "PublicNewMessage",
-            message: {
-                type: "text",
-                messageSenderId: selfData.userId,
-                // 只有 messageContent 需要加密
-                messageContent: msg,
-                messageSender: "靓仔三号",
-                notifiedParty: [],
-                messageReceiver: "DogeChat Web版",
-                isGroup: true,
-                messageReceiverId,
-            },
-        };
-        console.log("fakeData");
-        console.log(fakeData);
-        websocket.send(JSON.stringify(fakeData));
-    };
-
     const navigate = useNavigate();
 
     const handleSubmit = async (e: any) => {
@@ -144,12 +112,6 @@ const Login = observer(() => {
                             </a>
                         </div>
                     </form>
-                    <button
-                        type='submit'
-                        onClick={sendMessageTestFn}
-                        className='w-full mt-6 bg-indigo-600 rounded-lg px-4 py-2 text-lg text-white tracking-wide font-semibold font-sans'>
-                        发送消息
-                    </button>
                 </div>
             </div>
         </div>

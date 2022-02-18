@@ -14,6 +14,12 @@ class FriendMessageStore {
         this.values.data = data;
     }
 
+    @action updateFriendMessage(data: GlobalType.FriendMessageHistoryType) {
+        if (this.values.data.current !== data.current) {
+            this.values.data.records.concat(data.records);
+        }
+    }
+
     @action resetFriendMessage() {
         this.values.data = { current: 0, pages: 0, records: [], size: 0, total: 0 };
     }
