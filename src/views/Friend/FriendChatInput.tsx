@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useStores } from "../../store";
 import { websocket } from "../../api/websocket";
 import { GlobalType } from "../../GlobalType";
+import { v4 as uuidv4 } from "uuid";
 
 const FriendChatInput = ({
     chooseFriendInfo,
@@ -35,6 +36,7 @@ const FriendChatInput = ({
                 messageReceiver: chooseFriendInfo?.username,
                 isGroup: true,
                 messageReceiverId: chooseFriendInfo?.userId,
+                uuid: uuidv4(),
             },
         };
         console.log("fakeData");
