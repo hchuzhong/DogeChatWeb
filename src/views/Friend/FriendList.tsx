@@ -6,7 +6,7 @@ import { useStores } from "../../store";
 
 const FriendList = () => {
     const { FriendStore } = useStores();
-    
+
     const friendList = FriendStore.values.friendList;
     console.log("FriendList -----------------");
     console.log(friendList);
@@ -20,39 +20,6 @@ const FriendList = () => {
     };
 
     return (
-        // <div>
-        //     {/* <!-- This is an example component --> */}
-        //     <div className='container mx-auto shadow-lg rounded-lg'>
-        //         {/* <!-- Chatting --> */}
-        //         <div className='flex flex-row justify-between bg-white'>
-        //             {/* <!-- chat list --> */}
-        //             <div className='flex flex-col w-2/5 border-r-2 overflow-y-auto'>
-        //                 {/* <!-- search compt --> */}
-        //                 <div className='border-b-2 py-4 px-2'>
-        //                     <input
-        //                         type='text'
-        //                         placeholder='search chatting'
-        //                         className='py-2 px-2 border-2 border-gray-200 rounded-2xl w-full'
-        //                     />
-        //                 </div>
-
-        //                 <ol>
-        //                     {friendList.map((item) => (
-        //                         <div onClick={clickFn.bind(this, item.userId)}>
-        //                             <FrirendItem
-        //                                 key={item.userId}
-        //                                 chooseItemId={chooseItemId}
-        //                                 friendItemInfo={item}
-        //                             />
-        //                         </div>
-        //                     ))}
-        //                 </ol>
-        //             </div>
-        //             <FriendChat chooseItemId={chooseItemId} />
-        //         </div>
-        //     </div>
-        // </div>
-
         <div className='w-screen h-screen'>
             <div
                 className='grid grid-cols-3 min-w-full border rounded'

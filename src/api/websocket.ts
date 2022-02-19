@@ -26,51 +26,59 @@ export function initWebSocket(AuthStore: any, FriendStore: any, FriendMessageSto
 
     // Listen for messages
     websocket.addEventListener("message", function (event) {
-        console.log("Message from server ", event.data);
-        const data = JSON.parse(event.data);
-        if (data?.method === "publicKey") {
-            return AuthStore.setServerPubliKey(data?.data);
-        }
-        if (data?.method === "getPublicUnreadMessage") {
-            return FriendStore.setUnreadMessage(data?.data);
-        }
-        if (data?.method === "getHistory") {
-            const hadRecords = data?.data?.records?.length > 0;
-            if (!hadRecords) {
-                console.log("当前用户无聊天信息");
-            } else {
-                console.log("getHistory ===========");
-                console.log(data);
-                const recrods = data?.data?.records;
-                if (FriendMessageStore.values.data.records.length === 0) {
-                    FriendMessageStore.setFriendMessage(data?.data);
-                } else {
-                    FriendMessageStore.updateFriendMessage(data?.data);
-                }
-                FriendStore.setFriendMessageHistory(recrods[0].messageReceiverId, FriendMessageStore.values.data);
-            }
-            return;
-        }
-        if (data?.method === "PublicNewMessage") {
-            // TODO
-        }
-        console.log(data);
-        console.log("揭秘数据");
-        console.log(data?.data[0]?.messageContent);
-        if (!data?.data) return;
+        console.log("websocket message from server ");
+        const json = JSON.parse(event.data);
+        const method = json?.method;
+        const data = json?.data;
+        console.log(`${method} -------------`);
+        console.log(json);
 
-        const cfg = ["messageContent"];
-        const cfgData: string[] = [];
-        cfg.forEach((str) => {
-            let a = clientEncryptor.decrypt(data?.data[0][str]);
-            console.log(`str: ${str} ==================`);
-            console.log(data?.data[0][str]);
-            console.log(a);
-            console.log(decodeURIComponent(a as string));
-            cfgData.push(decodeURIComponent(a as string));
-        });
-        console.log(cfgData);
-        // 将收到的数据存起来
+        if (method) {
+            switch (method) {
+                case "publicKey":
+                    AuthStore.setServerPubliKey(data);
+                    break;
+                case "getPublicUnreadMessage":
+                    FriendStore.setUnreadMessage(data);
+                    break;
+                case "getHistory":
+                    const hadRecords = data?.records?.length > 0;
+                    if (!hadRecords) {
+                        console.log("当前用户无聊天信息");
+                    } else {
+                        const recrods = data?.records;
+                        if (FriendMessageStore.values.data.records.length === 0) {
+                            FriendMessageStore.setFriendMessage(data);
+                        } else {
+                            FriendMessageStore.updateFriendMessage(data);
+                        }
+                        FriendStore.setFriendMessageHistory(
+                            recrods[0].messageReceiverId,
+                            FriendMessageStore.values.data
+                        );
+                    }
+                    break;
+                case "PublicNewMessage":
+                    // TODO
+                    break;
+                case "readMessage":
+                    console.log("处理已读消息 ========");
+                    break;
+                case "sendPersonalMessageSuccess":
+                    console.log("处理自己发的单条私聊消息");
+                    console.log(FriendMessageStore);
+                    FriendMessageStore.pushOneFriendMessage(data);
+                    break;
+                case "sendToAllSuccess":
+                    console.log("处理自己发的单条群聊消息");
+                    console.log(FriendMessageStore);
+                    FriendMessageStore.pushOneFriendMessage(data);
+                    break;
+                case "PersonalNewMessage":
+                    console.log("处理其他人发的单条私聊消息");
+                    FriendMessageStore.pushOneFriendMessage(data[0]);
+            }
+        }
     });
 
     // Listen fo error
@@ -119,8 +127,5 @@ function send(data: any) {
 
 export function clientDecrypt(data: string) {
     let a = clientEncryptor.decrypt(data);
-    console.log(`str: ${data} ==================`);
-    console.log(a);
-    console.log(decodeURIComponent(a as string));
     return decodeURIComponent(a as string);
 }

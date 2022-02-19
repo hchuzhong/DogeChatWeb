@@ -12,12 +12,21 @@ class FriendMessageStore {
 
     @action setFriendMessage(data: GlobalType.FriendMessageHistoryType) {
         this.values.data = data;
+        if (this.values.data.records.length !== 0) {
+            this.values.data.records.reverse();
+        }
     }
 
     @action updateFriendMessage(data: GlobalType.FriendMessageHistoryType) {
         if (this.values.data.current !== data.current) {
-            this.values.data.records.concat(data.records);
+            const newRecords = data.records.reverse();
+            this.values.data.records.concat(newRecords);
         }
+    }
+
+    @action pushOneFriendMessage(data: GlobalType.FriendMessageType) {
+        console.log("更新单条消息 ------", data);
+        this.values.data.records.push(data);
     }
 
     @action resetFriendMessage() {
