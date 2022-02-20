@@ -47,15 +47,20 @@ export function initWebSocket(AuthStore: any, FriendStore: any, FriendMessageSto
                         console.log("当前用户无聊天信息");
                     } else {
                         const recrods = data?.records;
-                        if (FriendMessageStore.values.data.records.length === 0) {
+                        if (FriendMessageStore.values.records.length === 0) {
                             FriendMessageStore.setFriendMessage(data);
                         } else {
-                            FriendMessageStore.updateFriendMessage(data);
+                            if (FriendMessageStore.values.userId !== recrods[0].messageReceiverId) {
+                                FriendMessageStore.resetFriendMessage();
+                                FriendMessageStore.setFriendMessage(data);
+                            } else {
+                                FriendMessageStore.updateFriendMessage(data);
+                            }
+                            FriendStore.setFriendMessageHistory(
+                                recrods[0].messageReceiverId,
+                                FriendMessageStore.values
+                            );
                         }
-                        FriendStore.setFriendMessageHistory(
-                            recrods[0].messageReceiverId,
-                            FriendMessageStore.values.data
-                        );
                     }
                     break;
                 case "PublicNewMessage":

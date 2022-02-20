@@ -29,6 +29,7 @@ export namespace GlobalType {
         records: FriendMessageType[];
         size: number;
         total: number;
+        userId: string;
     };
 
     export type FriendEmojisInfoType = {
